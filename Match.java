@@ -24,6 +24,8 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 
 	public boolean subscribe(CommInterface client) throws RemoteException {
 
+		logger("Received sub request");
+
 		String id;
 		try {
 			id = RemoteServer.getClientHost();

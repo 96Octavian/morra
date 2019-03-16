@@ -33,10 +33,14 @@ public class MorraServer {
 
 			// Create the object to be exposed
 			Match server = new Match(players);
+			MatchInterface stub = (MatchInterface) UnicastRemoteObject.exportObject(server, 0);
 			logger("Created match");
 
+			Registry registry = LocateRegistry.getRegistry();
+			logger("Located the registry");
+
             // Bind the object
-            Naming.rebind("rmi://localhost/morra", server);
+            registry.rebind("rmi://localhost/morra", server);
 
             logger("Binding done. The ring is ready!");
 
