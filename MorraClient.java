@@ -27,10 +27,10 @@ public class MorraClient {
 			//logger("Located registry");
 			//MatchInterface server = (MatchInterface) registry.lookup("morra");
 			//look_up = (RMIInterface) Naming.lookup("//localhost/MyServer");
-			MatchInterface server = (MatchInterface) Naming.lookup("//192.168.1.154/server");
+			MatchInterface match = (MatchInterface) Naming.lookup("//192.168.1.154/server");
 			logger("Got the remote object");
 
-			while (!server.subscribe(client)) {
+			while (!match.subscribe(client)) {
 				System.out.println("Unable to subscribe. Retry?");
 				String resp = s.nextLine().trim();
 				if(!resp.equals("y") || !resp.equals("Y")) {
@@ -41,7 +41,7 @@ public class MorraClient {
             //keep sending msgs
             while(true){
                 String msg=s.nextLine().trim();
-                server.play(client, msg);
+                match.play(client, msg);
             }
 
         }catch (Exception e) {

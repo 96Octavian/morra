@@ -19,6 +19,10 @@ public class Player {
 		games = 0;
 	}
 
+	public String toString() {
+		return this.name + " - " + this.ID + ": " + this.wins + "/" + this.games;
+	}
+
 	public void printer(String msg) throws RemoteException{
 		printerz.accept(msg);
 	}

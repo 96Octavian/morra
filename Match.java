@@ -32,7 +32,8 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 		} catch (ServerNotActiveException e) {
 			return false;
 		}
-		logger("Got the ID");
+		logger("Got the ID " + id);
+		logger("From " + client.getName());
 		if (players.containsKey(id)) {
 			logger("Already subscribed");
 			client.printout("Already subscribed");
@@ -40,8 +41,11 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 		}
 
 		players.put(id, new Player(client, id));
-		client.printout("You joined the tournament");
 		logger("Client joined");
+		for (String pl : players.keySet()) {
+			logger(players.get(pl).toString());
+		}
+		client.printout("You joined the tournament");
 		for (String playerID : players.keySet()) {
 			logger("Sending ID to " + playerID);
 			if(playerID != id) {
