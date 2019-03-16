@@ -43,6 +43,7 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 		client.printout("You joined the tournament");
 		logger("Client joined");
 		for (String playerID : players.keySet()) {
+			logger("Sending ID to " + playerID);
 			if(playerID != id) {
 				players.get(playerID).printer(client.getName() + " joined the tournament");
 			}

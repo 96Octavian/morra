@@ -39,7 +39,7 @@ public class MorraServer {
 			logger("Created match");
 			//MatchInterface stub = (MatchInterface) UnicastRemoteObject.exportObject(server, 0);
 			//Naming.rebind("//localhost/MyServer", new ServerOperation());
-			Naming.rebind("//localhost/server", server);
+			Naming.rebind("//127.0.0.1/server", server);
 
             logger("Binding done. The ring is ready!");
 
