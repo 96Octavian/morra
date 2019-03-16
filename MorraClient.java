@@ -20,7 +20,7 @@ public class MorraClient {
 			logger("Created Comm");
 
             //get the server remote object
-			MatchInterface server = (MatchInterface) Naming.lookup("rmi://localhost/morra");
+			MatchInterface server = (MatchInterface) Naming.lookup("rmi://riserva/morra");
 			logger("Got the remote object");
 
 			while (!server.subscribe(client)) {
