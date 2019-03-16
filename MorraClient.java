@@ -3,6 +3,10 @@ import java.util.Scanner;
 
 public class MorraClient {
 
+	private static void logger(String msg) {
+		System.out.println("[Client] " + msg);
+	}
+
     public static void main (String[] argv) {
         try {
 
@@ -13,9 +17,11 @@ public class MorraClient {
 
             //create the instance of the client
 			CommInterface client = new Comm(name);
+			logger("Created Comm");
 
             //get the server remote object
-            MatchInterface server = (MatchInterface) Naming.lookup("rmi://localhost/morra");
+			MatchInterface server = (MatchInterface) Naming.lookup("rmi://localhost/morra");
+			logger("Got the remote object");
 
 			while (!server.subscribe(client)) {
 				System.out.println("Unable to subscribe. Retry?");

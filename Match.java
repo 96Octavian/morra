@@ -56,6 +56,10 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 		return r % 3;
 	}
 
+	private void logger(String msg) {
+		System.out.println("[Match] " + msg);
+	}
+
 	private void broadcast(String message) {
 		for (String playerID : players.keySet()) {
 			try {

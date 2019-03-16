@@ -19,20 +19,26 @@ public class MorraServer {
 		}
 	}
 
+	private static void logger(String msg) {
+		System.out.println("[System] " + msg);
+	}
+
     public static void main (String[] argv) {
         try {
 
 			Scanner s = new Scanner(System.in);
 
 			players =  new HashMap<String, Player>();
+			logger("Created list");
 
 			// Create the object to be exposed
-            Match server = new Match(players);
+			Match server = new Match(players);
+			logger("Created match");
 
             // Bind the object
             Naming.rebind("rmi://localhost/morra", server);
 
-            System.out.println("[System] The ring is ready!");
+            logger("Binding done. The ring is ready!");
 
             //keep waiting new mesages from shell
             while(true){
