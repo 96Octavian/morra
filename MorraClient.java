@@ -23,8 +23,11 @@ public class MorraClient {
 
             //get the server remote object
 			// MatchInterface server = (MatchInterface) Naming.lookup("rmi://riserva/morra");
-			Registry registry = LocateRegistry.getRegistry("riserva");
-			MatchInterface server = (MatchInterface) registry.lookup("morra");
+			//Registry registry = LocateRegistry.getRegistry("riserva");
+			//logger("Located registry");
+			//MatchInterface server = (MatchInterface) registry.lookup("morra");
+			//look_up = (RMIInterface) Naming.lookup("//localhost/MyServer");
+			MatchInterface server = (MatchInterface) Naming.lookup("//riserva/server");
 			logger("Got the remote object");
 
 			while (!server.subscribe(client)) {
