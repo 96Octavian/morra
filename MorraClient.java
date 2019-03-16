@@ -1,5 +1,7 @@
 import java.rmi.Naming;
 import java.util.Scanner;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class MorraClient {
 
