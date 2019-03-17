@@ -11,11 +11,11 @@ import java.rmi.server.ServerNotActiveException;
 public class Match extends UnicastRemoteObject implements MatchInterface {
 
 	private static final long serialVersionUID = 1L;
-	private Map<String, Player> players;
+	private Map<Integer, Player> players;
 	private Map<String, Integer> moves = new HashMap<String, Integer>();
-	private ArrayList<Object> currentPlayer = new ArrayList<Object>();
+	private ArrayList<Object> champion = new ArrayList<Object>();
 
-	public Match(Map<String, Player> players) throws RemoteException {
+	public Match(Map<Integer, Player> players) throws RemoteException {
 		this.players = players;
 		moves.put("Sasso", 0);
 		moves.put("Carta", 1);
@@ -24,30 +24,31 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 
 	public boolean subscribe(CommInterface client) throws RemoteException {
 
-		logger("Received sub request");
+		Utilities.logger("Received sub request");
 
-		String id;
-		try {
-			id = RemoteServer.getClientHost();
-		} catch (ServerNotActiveException e) {
-			return false;
+		Integer id = client.getID();
+		Utilities.logger("Got the ID " + id + " from " + client.getName());
+		if(id == 0) {
+			id = MorraServer.getAvailableID();
+			client.setID(id);
+			Utilities.logger("User now logged with ID " + id);
 		}
-		logger("Got the ID " + id);
-		logger("From " + client.getName());
 		if (players.containsKey(id)) {
-			logger("Already subscribed");
+			Utilities.logger("Already subscribed");
 			client.printout("Already subscribed");
-			return false;
+			return true;
 		}
 
 		players.put(id, new Player(client, id));
-		logger("Client joined");
-		for (String pl : players.keySet()) {
-			logger(players.get(pl).toString());
-		}
+		Utilities.logger("Client joined");
+
+		/*for (String pl : players.keySet()) {
+			Utilities.logger(players.get(pl).toString());
+		}*/
+
 		client.printout("You joined the tournament");
-		for (String playerID : players.keySet()) {
-			logger("Sending ID to " + playerID);
+		for (Integer playerID : players.keySet()) {
+			Utilities.logger("Sending ID to " + playerID);
 			if(playerID != id) {
 				players.get(playerID).printer(client.getName() + " joined the tournament");
 			}
@@ -61,17 +62,13 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 		// 0: stessa mossa
 		// 2: perde
 
-		int r = moves.get("Forbice") - moves.get("Sasso");
+		int r = moves.get(mossaCampione) - moves.get(mossaSfidante);
 		if (r<0) r = r + 3;
 		return r % 3;
 	}
 
-	private void logger(String msg) {
-		System.out.println("[Match] " + msg);
-	}
-
 	private void broadcast(String message) {
-		for (String playerID : players.keySet()) {
+		for (Integer playerID : players.keySet()) {
 			try {
 				players.get(playerID).printer(message);
 			} catch (Exception e) {
@@ -81,46 +78,41 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 
 	}
 
-	public void play(CommInterface client, String mossaSfidante) throws RemoteException {
+	public void play(Integer ID, String mossaSfidante) throws RemoteException {
 
-		String ID;
-		try {
-			ID = RemoteServer.getClientHost();
-		} catch (Exception e) {
-			client.printout("Error");
-			return;
-		}
-		
 		// Check if player subscribed first
 		if(!players.containsKey(ID)){
-			client.printout("You are not subscribed");
+			players.get(ID).printer("You are not subscribed");
 			return;
 		}
 		// Check if there's a champion already
-		if(currentPlayer.size() == 0) {
-			currentPlayer.add(players.get(ID));
-			currentPlayer.add(mossaSfidante);
+		if(champion.size() == 0) {
+			champion.add(players.get(ID));
+			champion.add(mossaSfidante);
 			players.get(ID).printer("Waiting for an opponent...");
 			return;
 		}
 		// Check if he is already the champion
-		if(((Player) currentPlayer.get(0)).getID() == ID) {
-			if(currentPlayer.size() == 1) {
-				currentPlayer.add(mossaSfidante);
+		if(((Player) champion.get(0)).getID() == ID) {
+			if(champion.size() == 1) {
+				champion.add(mossaSfidante);
+				players.get(ID).printer("Waiting for an opponent...");
+				return;
 			}
 			players.get(ID).printer("You already made your choice. Waiting for an opponent...");
 			return;
 		}
 
-		String msg = players.get(ID).getName() + "challenged " + ((Player) currentPlayer.get(0)).getName() + "!";
+		String msg = players.get(ID).getName() + "challenged " + ((Player) champion.get(0)).getName() + "!";
 		broadcast(msg);
-		((Player) currentPlayer.get(0)).oneMoreGame();
+		((Player) champion.get(0)).oneMoreGame();
 		players.get(ID).oneMoreGame();
 
-		int result = beats((String) currentPlayer.get(1), mossaSfidante);
+		int result = beats((String) champion.get(1), mossaSfidante);
 		if(result == 1) {
 			broadcast("Our champion wins");
-			((Player) currentPlayer.get(0)).oneMoreWin();
+			((Player) champion.get(0)).oneMoreWin();
+			champion.remove(1);
 		}
 		else if(result == 0) {
 			broadcast("It's a tie");
@@ -128,8 +120,8 @@ public class Match extends UnicastRemoteObject implements MatchInterface {
 		else if(result == 2) {
 			broadcast("The challenger wins!");
 			players.get(ID).oneMoreWin();
-			currentPlayer.add(players.get(ID));
-			currentPlayer.remove(1);
+			champion.clear();
+			champion.add(players.get(ID));
 		}
 	}
 

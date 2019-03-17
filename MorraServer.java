@@ -10,10 +10,12 @@ import java.rmi.server.UnicastRemoteObject;
 
 public class MorraServer {
 
-	private static Map<String, Player> players;
+	public static Integer ID = 0;
+
+	private static Map<Integer, Player> players;
 
 	private static void broadcast(String message) {
-		for (String playerID : players.keySet()) {
+		for (Integer playerID : players.keySet()) {
 			try {
 				players.get(playerID).printer(message);
 			} catch (Exception e) {
@@ -22,8 +24,9 @@ public class MorraServer {
 		}
 	}
 
-	private static void logger(String msg) {
-		System.out.println("[System] " + msg);
+	public static int getAvailableID() {
+		ID++;
+		return ID;
 	}
 
     public static void main (String[] argv) {
@@ -31,17 +34,17 @@ public class MorraServer {
 
 			Scanner s = new Scanner(System.in);
 
-			players =  new HashMap<String, Player>();
-			logger("Created list");
+			players =  new HashMap<Integer, Player>();
+			Utilities.logger("Created list");
 
 			// Create the object to be exposed
 			Match server = new Match(players);
-			logger("Created match");
+			Utilities.logger("Created match");
 			//MatchInterface stub = (MatchInterface) UnicastRemoteObject.exportObject(server, 0);
 			//Naming.rebind("//localhost/MyServer", new ServerOperation());
 			Naming.rebind("//127.0.0.1/server", server);
 
-            logger("Binding done. The ring is ready!");
+            Utilities.logger("Binding done. The ring is ready!");
 
             //keep waiting new mesages from shell
             while(true){

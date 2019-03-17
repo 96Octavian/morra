@@ -6,12 +6,12 @@ import java.rmi.server.RemoteServer;
 public class Player {
 
 	private String name;
-	private final String ID;
+	private final Integer ID;
 	private int wins;
 	private int games;
 	private MyInterface<String> printerz;
 
-	public Player(CommInterface client, String ID) throws RemoteException{
+	public Player(CommInterface client, Integer ID) throws RemoteException{
 		name = client.getName();
 		this.ID = ID;
 		printerz = client::printout;
@@ -31,7 +31,7 @@ public class Player {
 		return name;
 	}
 
-	public String getID() {
+	public Integer getID() {
 		return ID;
 	}
 
