@@ -18,7 +18,7 @@ public class MorraClient {
 			Utilities.logger("Created Comm");
 
             //get the server remote object
-			MatchInterface match = (MatchInterface) Naming.lookup("//127.0.0.1/server");
+			MatchInterface match = (MatchInterface) Naming.lookup("//riserva/server");
 			Utilities.logger("Got the remote object");
 
 			while (!match.subscribe(client)) {
@@ -32,7 +32,7 @@ public class MorraClient {
             //keep sending msgs
             while (true){
                 String msg=s.nextLine().trim();
-                match.play(client.getID, msg);
+                match.play(client.getID(), msg);
             }
 
         } catch (Exception e) {
