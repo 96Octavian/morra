@@ -27,7 +27,7 @@ public class MorraClient {
 			//logger("Located registry");
 			//MatchInterface server = (MatchInterface) registry.lookup("morra");
 			//look_up = (RMIInterface) Naming.lookup("//localhost/MyServer");
-			MatchInterface match = (MatchInterface) Naming.lookup("//192.168.1.154/server");
+			MatchInterface match = (MatchInterface) Naming.lookup("//127.0.0.1/server");
 			logger("Got the remote object");
 
 			while (!match.subscribe(client)) {
